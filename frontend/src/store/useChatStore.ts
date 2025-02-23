@@ -1,6 +1,7 @@
 import { create } from "zustand";
 import { axiosInstance } from "../lib/axios";
 import toast from "react-hot-toast";
+import { useAuthStore } from "./user-auth.store";
 
 
 interface IChatState {
@@ -8,14 +9,16 @@ interface IChatState {
     isUsersLoading: boolean,
     isMessagesLoading: boolean,
 
-    selectedUser: null,
+    selectedUser: any | null,
     messages: Array<unknown>;
     users: Array<unknown>
 
     sendMessage: (messageData: { text: string; imageBase64: any }) => Promise<void>;
     getUsers: () => void;
     getMessages: (userId: string) => void;
-    setSelectedUser: (user: unknown) => void
+    setSelectedUser: (user: any) => void
+    subscribeToMessages: () => void
+    unSubscribeFromMessages: () => void
 }
 
 export const useChatStore = create<IChatState>((set, get) => ({
@@ -45,19 +48,14 @@ export const useChatStore = create<IChatState>((set, get) => ({
     },
 
     sendMessage: async ({ text, imageBase64 }) => {
-
         try {
-            // get it from the curr global state im on 
-            const { selectedUser, messages } = get();
-            const res = await axiosInstance.post(`/message/send/${selectedUser._id}`, { text, imageBase64 });
-            // add this message to the messages
-
-            set({ messages: [...messages, res.data] })
-
+            const { selectedUser } = get();
+            if (!selectedUser) return;
+            await axiosInstance.post(`/message/send/${selectedUser._id}`, { text, imageBase64 });
+            // Message will be added through the socket event
         } catch (err) {
             toast.error('Something went wrong, Please try again later')
             console.log(err);
-
         }
     },
 
@@ -78,8 +76,28 @@ export const useChatStore = create<IChatState>((set, get) => ({
 
     setSelectedUser: (user) => {
         set({ selectedUser: user })
-    }
+    },
 
+
+    subscribeToMessages: () => {
+        const { selectedUser } = get();
+        if (!selectedUser) return;
+
+        // get the socket from authStore global state
+        const socket = useAuthStore.getState().socket
+
+        socket.on("newMessage", (newMessage) => {
+            set({
+                // keep all the messages already and add the new one 
+                messages: [...get().messages, newMessage]
+            })
+        })
+    },
+
+    unSubscribeFromMessages: () => {
+        const socket = useAuthStore.getState().socket
+        socket.off("newMessage")
+    }
 
 
 })) 

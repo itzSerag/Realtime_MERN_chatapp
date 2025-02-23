@@ -1,10 +1,7 @@
 import { create } from 'zustand';
 import { axiosInstance } from '../lib/axios';
 import toast from 'react-hot-toast';
-import { io } from 'socket.io-client'
-
-
-
+import { io, Socket } from 'socket.io-client'
 
 
 const BASE_URL = "localhost:5000/"
@@ -21,10 +18,10 @@ interface ISignupData extends ILoginData {
 
 interface IAuthUser {
     // Define the shape of the authenticated user object
-    id: string;
+    _id: string;
     email: string;
     phoneNumber?: string;
-    profileImage?: string;
+    imgUrl?: string;
     // Add other user properties as needed
 }
 
@@ -35,7 +32,7 @@ interface IAuthStore {
     isUpdatingProfile: boolean;
     isCheckingAuth: boolean;
     onlineUsers: any[]; // Replace `any` with a proper type if you have one
-    socket: any; // Replace `any` with the appropriate socket type (e.g., Socket from 'socket.io-client')
+    socket: Socket; // Replace `any` with the appropriate socket type (e.g., Socket from 'socket.io-client')
 
     checkAuth: () => Promise<void>;
     login: (data: ILoginData) => Promise<void>;
@@ -161,11 +158,30 @@ export const useAuthStore = create<IAuthStore>((set, get) => ({
         const { authUser } = get();
         if (!authUser || get().socket?.connected) return;
         // Implement socket connection logic here
-        const socket = io(BASE_URL, {});
+        const socket = io(BASE_URL, {
+            query: {
+                userId: authUser._id
+            }
+        });
         socket.on('connect', () => {
             set({ socket })
 
         });
+
+        socket.on('onerror', () => {
+            toast.error('An unexpected error occurred');
+            set({ socket: null })
+        })
+
+        socket.on('getOnlineUsers', (usersIds) => {
+            set({ onlineUsers: usersIds })
+            console.log(usersIds);
+
+        })
+
+
+
+
     },
     dsiConnectSocket: async () => {
         // Implement socket disconnection logic here

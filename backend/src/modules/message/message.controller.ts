@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards, Query } from '@nestjs/common';
 import { MessageService } from './message.service';
 import { JwtAuthGuard } from 'src/modules/auth/guards/jwt.guard';
 import { CurrentUser } from 'src/modules/auth/decorators/user.decorator';
@@ -19,9 +19,15 @@ export class MessageController {
 
   @UseGuards(JwtAuthGuard)
   @Get('messages/:id')
-  getMessagesHistory(@CurrentUser() user: UserDocument,
-    @Param('id') _id: string) {
-    return this.messageService.getMessagesHistory(String(user._id), String(_id))
+  getMessagesHistory(
+    @CurrentUser() user: UserDocument,
+    @Param('id') _id: string,
+  ) {
+    return this.messageService.getMessagesHistory(
+      String(user._id), 
+      String(_id),
+
+    );
   }
 
   @UseGuards(JwtAuthGuard)

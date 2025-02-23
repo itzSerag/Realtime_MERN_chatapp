@@ -11,14 +11,21 @@ import { useAuthStore } from "../store/user-auth.store";
 
 export const ChatContainer = () => {
 
-    const { messages, getMessages, isMessagesLoading, selectedUser } = useChatStore()
+    const { messages, getMessages, isMessagesLoading, selectedUser, subscribeToMessages, unSubscribeFromMessages } = useChatStore()
     const { authUser } = useAuthStore()
     const messageEndRef = useRef(null);
 
     // remember useEffect should run without any conditions
     useEffect(() => {
+        if (!selectedUser?._id) return;
+
         getMessages(String(selectedUser._id));
-    }, [getMessages, selectedUser._id])
+        subscribeToMessages();
+
+        return () => {
+            unSubscribeFromMessages();
+        };
+    }, [selectedUser?._id]);
 
 
     if (isMessagesLoading) {

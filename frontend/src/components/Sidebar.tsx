@@ -45,6 +45,7 @@ export const Sidebar = () => {
                 </div>
             </div>
 
+            {/* Showing the users */}
             <div className="overflow-y-auto w-full py-3">
                 {filteredUsers.map((user) => (
                     <button
@@ -53,7 +54,7 @@ export const Sidebar = () => {
                         className={`
                         w-full p-3 flex items-center gap-3
                         hover:bg-base-300 transition-colors
-                        ${selectedUser?._id === user._id ? "bg-base-300 ring-1 ring-base-300" : ""}
+                        ${selectedUser?._id === user._id ? "bg-base-200" : ""}
             `}
                     >
                         <div className="relative mx-auto lg:mx-0">
@@ -64,8 +65,8 @@ export const Sidebar = () => {
                             />
                             {onlineUsers.includes(user._id) && (
                                 <span
-                                    className="absolute bottom-0 right-0 size-3 bg-green-500 
-                                    rounded-full ring-2 ring-zinc-900"
+                                    className="absolute bottom-0 right-0 size-3 bg-green-400 
+                                    rounded-full ring-2 ring-zinc-300"
                                 />
                             )}
                         </div>

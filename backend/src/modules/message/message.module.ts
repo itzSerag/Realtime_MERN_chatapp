@@ -7,9 +7,10 @@ import { MessageRepo } from './message.repo';
 import { DatabaseModule } from 'src/core/database';
 import { MessageDocument, MessageSchema } from './model/message.schema';
 import { CloudinaryModule } from 'src/core/cloudinary/cloudinary.module';
+import { SocketModule } from 'src/socket/socket.module';
 
 @Module({
-  imports: [UserModule, CloudinaryModule, JwtModule, DatabaseModule.forFeature([{
+  imports: [UserModule, CloudinaryModule, JwtModule, SocketModule, DatabaseModule.forFeature([{
     schema: MessageSchema, name: MessageDocument.name
   }])],
   controllers: [MessageController],

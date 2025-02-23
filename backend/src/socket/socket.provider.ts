@@ -6,33 +6,35 @@ import {
 } from "@nestjs/websockets";
 import { Server, Socket } from "socket.io";
 
-
-// GLO
-
-@WebSocketGateway()
+@WebSocketGateway({ cors: { origin: "*" } })
 export class WebSocketsGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
-
-    // Where i can tell the online user and the coresponding socket io
-    private onlineUsers = new Map<string, string>();
-
-
-
     @WebSocketServer() server: Server;
+    private onlineUsers: Record<string, string> = {};
+
     handleConnection(client: Socket) {
-
-        console.log(`new User connected `, client.id);
-        client.emit("connection_success", { message: "Connected successfully" });
-
+        const userId = client.handshake.query.userId as string;
+        if (!userId) {
+            console.error("No userId provided in WebSocket handshake!");
+            return;
+        }
+        this.onlineUsers[userId] = client.id;
+        console.log(`User ${userId} connected. Socket ID: ${client.id}`);
+        this.server.emit("getOnlineUsers", Object.keys(this.onlineUsers));
     }
 
     handleDisconnect(client: Socket) {
-        console.log(`User disconnected: ${client.id}`);
+        const userId = Object.keys(this.onlineUsers).find((id) => this.onlineUsers[id] === client.id);
+
+        if (userId) {
+            delete this.onlineUsers[userId]; // Remove from online list
+            console.log(`User ${userId} disconnected. Current online users:`, this.onlineUsers);
+            this.server.emit("getOnlineUsers", Object.keys(this.onlineUsers)); // get all the connected users in the app
+        }
     }
 
-    // @UseGuards(JwtAuthGuard) // Ensure only authenticated users can send messages
-    // @SubscribeMessage("chat_message")
-    // handleMessage(client: Socket, @MessageBody() message: { text: string }) {
-    //     this.server.emit("chat_message", { user: user.username, text: message.text });
-    // }
+
+    getReceiverSocketId(userId: string) {
+        return this.onlineUsers[userId];
+    }
 }
