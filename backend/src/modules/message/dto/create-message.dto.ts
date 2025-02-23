@@ -1,4 +1,4 @@
-import { IsBase64, IsNotEmpty, IsString } from "class-validator";
+import { IsBase64, IsNotEmpty, IsOptional, IsString } from "class-validator";
 
 export class CreateMessageDto {
 
@@ -6,5 +6,7 @@ export class CreateMessageDto {
     @IsNotEmpty()
     text: string
 
+    @IsOptional()
+    @IsBase64()
     imageBase64?: string
 }

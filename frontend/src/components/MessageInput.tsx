@@ -12,7 +12,7 @@ export const MessageInput = () => {
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
-        const MAX_SIZE = 20 * 1024 * 1024;
+        const MAX_SIZE = 10 * 1024 * 1024;
 
         if (!file) return; // If no file is selected
 
@@ -23,7 +23,7 @@ export const MessageInput = () => {
         }
 
         if (file.size > MAX_SIZE) {
-            toast.error("Max image size is 20MB");
+            toast.error(`Max image size is ${MAX_SIZE / (1024 * 1024)}mb`);
             e.target.value = ""; // Reset input field
             return;
         }
@@ -46,6 +46,9 @@ export const MessageInput = () => {
     const handleSendMessage = async (e) => {
         e.preventDefault();
         if (!text.trim() && !imagePreview) return;
+        if (!text.trim()) {
+            toast.error('Text must be provided')
+        }
 
         try {
             await sendMessage({ text: text.trim(), imageBase64: imagePreview });
@@ -53,6 +56,8 @@ export const MessageInput = () => {
             // Clear form
             setText("");
             setImagePreview(null);
+
+            // reset the input to be null
             if (fileInputRef.current) fileInputRef.current.value = "";
         } catch (error) {
             console.error("Failed to send message:", error);

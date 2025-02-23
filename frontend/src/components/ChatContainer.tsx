@@ -28,6 +28,13 @@ export const ChatContainer = () => {
     }, [selectedUser?._id]);
 
 
+    useEffect(() => {
+
+        if (messageEndRef.current && messages)
+            messageEndRef.current.scrollIntoView({ behavior: "smooth" })
+
+    }, [messages])
+
     if (isMessagesLoading) {
 
         return (

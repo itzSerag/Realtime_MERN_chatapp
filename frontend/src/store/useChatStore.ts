@@ -87,6 +87,7 @@ export const useChatStore = create<IChatState>((set, get) => ({
         const socket = useAuthStore.getState().socket
 
         socket.on("newMessage", (newMessage) => {
+            if (newMessage.senderId !== selectedUser._id) return
             set({
                 // keep all the messages already and add the new one 
                 messages: [...get().messages, newMessage]
