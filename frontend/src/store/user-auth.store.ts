@@ -4,7 +4,7 @@ import toast from 'react-hot-toast';
 import { io, Socket } from 'socket.io-client'
 
 
-const BASE_URL = "localhost:5000/"
+const BASE_URL = import.meta.env.MODE === 'development' ? "http:/localhost:5000/api/v1" : '/api/v1'
 
 
 interface ILoginData {
