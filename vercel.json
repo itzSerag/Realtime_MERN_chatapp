@@ -1,0 +1,13 @@
+{
+    "rewrites": [
+        {
+            "source": "/api/(.*)",
+            "destination": "/backend/dist/main.js"
+        }
+    ],
+    "functions": {
+        "api/index.js": {
+            "runtime": "nodejs18.x"
+        }
+    }
+}

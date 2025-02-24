@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { axiosInstance } from '../lib/axios';
 import toast from 'react-hot-toast';
-import { io, Socket } from 'socket.io-client'
+import { io } from 'socket.io-client'
 
 
 const BASE_URL = import.meta.env.MODE === 'development' ? "http:/localhost:5000/api/v1" : '/api/v1'
@@ -31,8 +31,8 @@ interface IAuthStore {
     isLoggingIn: boolean;
     isUpdatingProfile: boolean;
     isCheckingAuth: boolean;
-    onlineUsers: any[]; // Replace `any` with a proper type if you have one
-    socket: Socket; // Replace `any` with the appropriate socket type (e.g., Socket from 'socket.io-client')
+    onlineUsers: any[];
+    socket: any;
 
     checkAuth: () => Promise<void>;
     login: (data: ILoginData) => Promise<void>;
@@ -167,11 +167,6 @@ export const useAuthStore = create<IAuthStore>((set, get) => ({
             set({ socket })
 
         });
-
-        socket.on('onerror', () => {
-            toast.error('An unexpected error occurred');
-            set({ socket: null })
-        })
 
         socket.on('getOnlineUsers', (usersIds) => {
             set({ onlineUsers: usersIds })
