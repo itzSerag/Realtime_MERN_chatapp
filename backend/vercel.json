@@ -1,8 +1,6 @@
 {
-    "buildCommand": "npm install && npm run build",
-    "outputDirectory": "dist",
-    "routes": [
-      { "src": "/api/v1/(.*)", "dest": "/backend/dist/main.js" }
-    ]
-  }
-  
+    "scripts": {
+        "build": "nest build",
+        "start": "node dist/main.js"
+    }
+}
