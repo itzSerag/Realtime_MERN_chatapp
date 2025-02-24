@@ -6,11 +6,11 @@ export default defineConfig({
 
   build: {
     chunkSizeWarningLimit: 1000 // Increase limit to 1000 KB
-  } ,
+  },
   server: {
     proxy: {
       '/api/v1': {
-        target: 'https://vercel.com/serag-eldeins-projects/chatty-serageldien-project', // Use the actual deployed backend URL
+        target: 'https://chatty-serageldien-project.vercel.app/', // Use the actual deployed backend URL
         changeOrigin: true,
         secure: false,
       },
