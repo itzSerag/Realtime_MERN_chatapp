@@ -43,7 +43,6 @@ async function bootstrap() {
 
         app.useStaticAssets(join(__dirname, '..', '..', 'frontend', 'dist'));
         app.setBaseViewsDir(join(__dirname, '..', '..', 'frontend', 'dist'));
-        app.setViewEngine('html');
     }
     await app.listen(process.env.PORT ?? 3000);
 }
