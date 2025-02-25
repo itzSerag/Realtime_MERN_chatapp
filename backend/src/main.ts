@@ -39,11 +39,11 @@ async function bootstrap() {
 
     // Serve static files from the frontend build directory
 
-    if (process.env.NODE_ENV === 'production') {
+    // if (process.env.NODE_ENV === 'production') {
 
-        app.useStaticAssets(join(__dirname, '..', '..', 'frontend', 'dist'));
-        app.setBaseViewsDir(join(__dirname, '..', '..', 'frontend', 'dist'));
-    }
+    //     app.useStaticAssets(join(__dirname, '..', '..', 'frontend', 'dist'));
+    //     app.setBaseViewsDir(join(__dirname, '..', '..', 'frontend', 'dist'));
+    // }
     await app.listen(process.env.PORT ?? 3000);
 }
 
