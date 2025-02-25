@@ -6,6 +6,10 @@ import { Response } from 'express';
 export class AppController {
     @Get('*') // Catch-all for non-API routes
     serveFrontend(@Res() res: Response) {
-        res.sendFile(join(__dirname, '..', '..', 'frontend', 'dist', 'index.html'));
+        res.sendFile(join(__dirname, '..', '..', 'frontend', 'dist', 'index.html'), () => {
+            if (__filename.endsWith('js')) {
+                res.setHeader('Content-Type', 'application/javascript');
+            }
+        });
     }
 }
